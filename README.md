@@ -21,3 +21,5 @@ Using the confidence score, Watson assitant can detect the intents, so in case t
 
 
 
+
+
