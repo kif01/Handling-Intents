@@ -16,7 +16,7 @@ Using the confidence score, Watson assitant can detect the intents, so in case t
 3- Iterate through the intents: Customize and adjust the dialog to make it loop through the captured intents one by one, and thus trigger their corresponding node to answer the user's multi-intent question. </br>
 
 ## 1. Defining the confidence score threshold value
-The confidence score helps us to optimize which intents to focus whenever Watson Assistant detects them. If no intents were detected, the assistant shows "Irrelevant", which means that no intent has a confidence score above **0.2**. We need to make sure to put fair confidence threshold value, not too low and not too high (If the value is too high then it will be very hard to detect the intents). A value that ranges between 0.4-0.6 should be enough.As you can see here in the image below, we have created a context variable named "confidence threshold" in the first node (Greetings) and set its value to 0.4.
+The confidence score helps us to optimize which intents to focus whenever Watson Assistant detects them. If no intents were detected, the assistant shows "Irrelevant", which means that no intent has a confidence score above **0.2**. We need to make sure to put fair confidence threshold value, not too low and not too high (If the value is too high then it will be very hard to detect the intents). A value that ranges between 0.4-0.6 should be enough. As you can see here in the image below, we have created a context variable `confidence threshold` in the first node **Greetings** and set its value to 0.4.
 
 <img width="1208" alt="Screen Shot 2020-08-25 at 1 38 09 AM" src="https://user-images.githubusercontent.com/15332386/91099080-bcb7a180-e673-11ea-9279-1da17d3f8454.png">
 
