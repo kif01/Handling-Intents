@@ -1,11 +1,11 @@
-# Handling Multiple Intents in Watson Assistant
+## Handling Multiple Intents in Watson Assistant
 By default, Watson Assistant handles one intent at a time. For example, if we have an intent `#Transactions` that handles transaction queries and a user asks *I want to check my Transactions*, then the assistant jumps to the node that responds to this condition. What about multiple intents in the same query? It gets more complicated when a user asks multiple questions at the same time. For example, if a user asks *I want to check my Transactions and my current balance?*, we have two different intents. One responsible for transactions and the other for checking the balance. We will see how we can tweak the assistant to give him the ability to handle multiple intents and thus make it smarter.
 
-# How Intents works?
+### How Intents works?
 Intents in Watson assistant are triggered using a confidence score. Whenever a user asks a question, it's sent to every intent model that you have created, and each intent model returns a confidence score. The assistant satisfies the condition using the intent that has the highest confidence score.</br>
 Let's say we have 3 intent models: `#Transactions`, `#Balance` and `#Greetings`. If a user asks a question regarding his balance, then the highest confidence score will be the `#Balance` intent, and thus the assistant triggers the node that uses the `#Balance` intent. If we go back to the previous example *I want to check my Transactions and my current balance*, the assistant will detect the two intents but can only trigger one node using the intent that has the highest confidence score. With the concept of confidence score, it's possible to make the assistant handle multi-intents at the same time.
 
-# Implementing a Multi-Intent Dialog
+### Implementing a Multi-Intent Dialog
 
 Using the confidence score, Watson assitant can detect the intents, so in case the user has a query with multiple intents, we store these intents and then iterate through them. These are the 3 main steps: </br>
 
@@ -15,12 +15,12 @@ Using the confidence score, Watson assitant can detect the intents, so in case t
 
 3- Iterate through the intents: Customize and adjust the dialog to make it loop through the captured intents one by one, and thus trigger their corresponding node to answer the user's multi-intent question. </br>
 
-## 1. Defining the confidence score threshold value
+#### 1. Defining the confidence score threshold value
 The confidence score helps us to optimize which intents to focus whenever Watson Assistant detects them. If no intents were detected, the assistant shows "Irrelevant", which means that no intent has a confidence score above **0.2**. We need to make sure to put fair confidence threshold value, not too low and not too high (If the value is too high then it will be very hard to detect the intents). A value that ranges between 0.4-0.6 should be enough. As you can see here in the image below, we have created a context variable `confidence threshold` in the first node **Greetings** and set its value to 0.4.
 
 <img width="1208" alt="Screen Shot 2020-08-25 at 1 38 09 AM" src="https://user-images.githubusercontent.com/15332386/91099080-bcb7a180-e673-11ea-9279-1da17d3f8454.png">
 
-## 2.Capturing and storing the intents
+#### 2.Capturing and storing the intents
 Capturing the intents means that we want to extract all the intents from the user's input that have a confidence score above the defined threshold value. We can create a node that is responsible for extracting and saving the intents using the `filter` function to get these intents with this expression `<? intents.filter('intent', 'intent.confidence >= $confidence_threshold') ?>`.  The image below shows how we are checking if the context variable `$intents` (where we are storing our detected intents) is null. If it is, then we get and save all the intents that are above the defined confidence score value in the `$intents` variable (`$intents` variable is like an array containing the extracted intents).
 
 <img width="1232" alt="Screen Shot 2020-08-20 at 6 58 05 PM" src="https://user-images.githubusercontent.com/15332386/91048550-e4374b80-e62c-11ea-87fe-b81151618822.png">
@@ -28,7 +28,7 @@ Capturing the intents means that we want to extract all the intents from the use
 We create 2 child nodes to our **Extract** intents node. The first one checks if the list `$intents` is empty. Here we can simply just reset `$intents` to null. The second node is triggered whenever the list `$intents` has intents and makes a jump to the **Iterate Intent** node so we can start the iteration.</br>
 <img width="1245" alt="Screen Shot 2020-08-25 at 1 08 50 AM" src="https://user-images.githubusercontent.com/15332386/91096831-b9bab200-e66f-11ea-9e9d-6e929ed299c5.png">
 
-## 3. Iterating Through the intents
+#### 3. Iterating Through the intents
 We have our extracted intents stored in the `$intents` variable. Now we need to loop through this list that contains our intents so we can trigger their node correspondingly one by one.</br>
 The iteration happens in the **Iterate Intents** node. In the **Iterate Intents**, we first add a condition that checks if the intent list is not empty since we will jump back to this node after each iteration, then we get the first item from the list `$intents` using the expression `<? $intents.get(0).intent ?>` and store it in a new context variable so we can use it later on (in the image below, the intent is stored in `$current_intent`). 
 <img width="1232" alt="Screen Shot 2020-08-24 at 3 38 40 PM" src="https://user-images.githubusercontent.com/15332386/91071528-5b7ad880-e649-11ea-981b-72580669e901.png">
@@ -41,7 +41,7 @@ If `$current_intent` has the value "updateID", instead of putting `#updateID` fo
 <br><br>For example, if a user asks about his ID update and transactions, the assistant will first trigger the **Update ID** node and shows the response, but won't stop there. The list has another intent extracted which is transactions, thus the list `$intents` is not empty yet so the assistant will automatically repeat the process by jumping back to the node where we iterate through the list and thus eventually show the response for the transaction intent.
 <img width="1228" alt="Screen Shot 2020-08-24 at 3 58 24 PM" src="https://user-images.githubusercontent.com/15332386/91072488-a8ab7a00-e64a-11ea-9db4-f32f07812207.png"> 
 
-The modification that we created here works just like a while loop. We extract the intents from the user's query and store them in a context variable which is a list containing these items. We get the first item from the list, store it in another context variable, and remove it from the list. Then we go and check which node uses this intent that it's stored in our context variable and trigger it. Once it's done, we check if the list still has items. In case it has more items (i.e more captured intents) then we go back to the iterating node, and the process gets repeated to eventually trigger every node with its corresponding captured intent.
+<br><br>The modification that we created here works just like a while loop. We extract the intents from the user's query and store them in a context variable which is a list containing these items. We get the first item from the list, store it in another context variable, and remove it from the list. Then we go and check which node uses this intent that it's stored in our context variable and trigger it. Once it's done, we check if the list still has items. In case it has more items (i.e more captured intents) then we go back to the iterating node, and the process gets repeated to eventually trigger every node with its corresponding captured intent.
 
 
 
