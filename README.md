@@ -25,7 +25,7 @@ Capturing the intents means that we want to extract all the intents from the use
 
 <img width="1232" alt="Screen Shot 2020-08-20 at 6 58 05 PM" src="https://user-images.githubusercontent.com/15332386/91048550-e4374b80-e62c-11ea-87fe-b81151618822.png">
 
-We create 2 child nodes to our Extract intents node. The first one checks if the list $intents is empty. Here we can simply just reset $intents to null. The second node is triggered whenever the list $intents has intents so we can start the iteration.</br>
+We create 2 child nodes to our Extract intents node. The first one checks if the list $intents is empty. Here we can simply just reset $intents to null. The second node is triggered whenever the list $intents has intents and makes a jump to the iteration node so we can start the iteration.</br>
 <img width="1245" alt="Screen Shot 2020-08-25 at 1 08 50 AM" src="https://user-images.githubusercontent.com/15332386/91096831-b9bab200-e66f-11ea-9e9d-6e929ed299c5.png">
 
 ## 3. Iterating Through the intents
